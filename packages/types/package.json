@@ -1,0 +1,14 @@
+{
+  "name": "@ai-developer-feed/types",
+  "version": "0.0.1",
+  "description": "Shared TypeScript types",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

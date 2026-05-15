@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { VectorStoreService } from './vector-store.service';
 import { DEMO_DOCUMENTS, Document } from './demo-data';
 
 @Injectable()
 export class RAGService {
-  private client: Anthropic;
+  private client: OpenAI;
   private initialized = false;
 
   constructor(private vectorStore: VectorStoreService) {
-    this.client = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+    this.client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
     });
   }
 
@@ -20,29 +20,29 @@ export class RAGService {
     }
 
     this.vectorStore.clear();
-    DEMO_DOCUMENTS.forEach((doc) => {
-      this.vectorStore.addDocument(doc.id, doc.content, {
+    for (const doc of DEMO_DOCUMENTS) {
+      await this.vectorStore.addDocument(doc.id, doc.content, {
         title: doc.title,
       });
-    });
+    }
     this.initialized = true;
   }
 
   async ingestDocuments(documents: Document[]): Promise<void> {
-    documents.forEach((doc) => {
-      this.vectorStore.addDocument(doc.id, doc.content, {
+    for (const doc of documents) {
+      await this.vectorStore.addDocument(doc.id, doc.content, {
         title: doc.title,
       });
-    });
+    }
   }
 
   async retrieveRelevantDocs(query: string, topK: number = 3) {
-    return this.vectorStore.searchSimilar(query, topK);
+    return await this.vectorStore.searchSimilar(query, topK);
   }
 
   async query(userQuery: string): Promise<string> {
     // Retrieve relevant documents
-    const relevantDocs = this.vectorStore.searchSimilar(userQuery, 3);
+    const relevantDocs = await this.vectorStore.searchSimilar(userQuery, 3);
 
     // Build context from retrieved documents
     const context = relevantDocs
@@ -59,12 +59,15 @@ If the context doesn't contain relevant information, say so honestly.
 Context:
 ${context}`;
 
-    // Call Claude API
-    const response = await this.client.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+    // Call OpenAI API
+    const response = await this.client.chat.completions.create({
+      model: 'gpt-4o-mini',
       max_tokens: 1024,
-      system: systemPrompt,
       messages: [
+        {
+          role: 'system',
+          content: systemPrompt,
+        },
         {
           role: 'user',
           content: userQuery,
@@ -72,8 +75,8 @@ ${context}`;
       ],
     });
 
-    const textContent = response.content.find((block) => block.type === 'text');
-    return textContent ? textContent.text : 'No response generated';
+    const textContent = response.choices[0]?.message?.content;
+    return textContent || 'No response generated';
   }
 
   getDocuments() {

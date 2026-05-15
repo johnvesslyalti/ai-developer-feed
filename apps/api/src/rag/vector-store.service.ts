@@ -14,12 +14,12 @@ export class VectorStoreService {
 
   constructor(private embeddingsService: EmbeddingsService) {}
 
-  addDocument(
+  async addDocument(
     id: string,
     content: string,
     metadata?: Record<string, any>,
-  ): void {
-    const embedding = this.embeddingsService.generateEmbedding(content);
+  ): Promise<void> {
+    const embedding = await this.embeddingsService.generateEmbedding(content);
     this.vectors.set(id, {
       id,
       content,
@@ -28,13 +28,13 @@ export class VectorStoreService {
     });
   }
 
-  searchSimilar(query: string, topK: number = 3): VectorDocument[] {
+  async searchSimilar(query: string, topK: number = 3): Promise<VectorDocument[]> {
     const queryEmbedding =
-      this.embeddingsService.generateEmbedding(query);
+      await this.embeddingsService.generateEmbedding(query);
 
     const scores = Array.from(this.vectors.values()).map((doc) => ({
       doc,
-      score: this.embeddingsService.cosineSimilarity(
+      score: this.cosineSimilarity(
         queryEmbedding,
         doc.embedding,
       ),
@@ -44,6 +44,15 @@ export class VectorStoreService {
       .sort((a, b) => b.score - a.score)
       .slice(0, topK)
       .map((item) => item.doc);
+  }
+
+  private cosineSimilarity(vec1: number[], vec2: number[]): number {
+    const dotProduct = vec1.reduce((sum, val, idx) => sum + val * vec2[idx], 0);
+    const magnitude1 = Math.sqrt(vec1.reduce((sum, val) => sum + val * val, 0));
+    const magnitude2 = Math.sqrt(vec2.reduce((sum, val) => sum + val * val, 0));
+
+    if (magnitude1 === 0 || magnitude2 === 0) return 0;
+    return dotProduct / (magnitude1 * magnitude2);
   }
 
   getDocument(id: string): VectorDocument | undefined {

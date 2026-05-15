@@ -1,59 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import OpenAI from 'openai';
 
 @Injectable()
 export class EmbeddingsService {
-  private vocabulary = new Map<string, number>();
-  private embeddingDim = 100;
+  private client: OpenAI;
 
   constructor() {
-    this.initializeVocabulary();
-  }
-
-  private initializeVocabulary() {
-    const keywords = [
-      'machine',
-      'learning',
-      'neural',
-      'network',
-      'deep',
-      'artificial',
-      'intelligence',
-      'algorithm',
-      'data',
-      'pattern',
-      'training',
-      'language',
-      'processing',
-      'natural',
-      'transformer',
-      'attention',
-      'classification',
-      'recognition',
-      'model',
-      'layer',
-    ];
-
-    keywords.forEach((keyword, idx) => {
-      this.vocabulary.set(keyword, idx);
+    this.client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
     });
   }
 
-  generateEmbedding(text: string): number[] {
-    const embedding = new Array(this.embeddingDim).fill(0);
-    const words = text.toLowerCase().split(/\s+/);
-
-    words.forEach((word) => {
-      const idx = this.vocabulary.get(word);
-      if (idx !== undefined && idx < this.embeddingDim) {
-        embedding[idx] += 1;
-      }
+  async generateEmbedding(text: string): Promise<number[]> {
+    const response = await this.client.embeddings.create({
+      model: 'text-embedding-3-small',
+      input: text,
     });
 
-    // Normalize the embedding
-    const magnitude = Math.sqrt(
-      embedding.reduce((sum, val) => sum + val * val, 0),
-    );
-    return magnitude > 0 ? embedding.map((val) => val / magnitude) : embedding;
+    return response.data[0].embedding;
   }
 
   cosineSimilarity(vec1: number[], vec2: number[]): number {

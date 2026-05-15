@@ -1,15 +1,13 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Inject } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import type { Request } from 'express';
-import { User } from '../users/user.entity';
+import { DRIZZLE } from '../db/drizzle.provider';
+import type { DrizzleDB } from '../db/drizzle.provider';
+import { users } from '../db/schema';
 
 @Injectable()
 export class GoogleTokenGuard implements CanActivate {
-  constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
-  ) {}
+  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -20,8 +18,13 @@ export class GoogleTokenGuard implements CanActivate {
     }
 
     try {
-      const user = await this.usersRepository.findOne({ where: { id: token } });
+      const result = await this.db
+        .select()
+        .from(users)
+        .where(eq(users.id, token))
+        .limit(1);
 
+      const user = result[0];
       if (!user) {
         throw new UnauthorizedException('User not found');
       }

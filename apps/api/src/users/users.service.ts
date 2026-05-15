@@ -1,14 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './user.entity';
+import { Inject, Injectable } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
+import { DRIZZLE } from '../db/drizzle.provider';
+import type { DrizzleDB } from '../db/drizzle.provider';
+import { users, User, NewUser } from '../db/schema';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
-  ) {}
+  constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
 
   async upsert(googleProfile: {
     id: string;
@@ -19,34 +17,47 @@ export class UsersService {
     const email = googleProfile.emails[0]?.value || '';
     const avatar: string | null = googleProfile.photos[0]?.value || null;
 
-    let user = await this.usersRepository.findOne({
-      where: { googleId: googleProfile.id },
-    });
+    const existing = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.googleId, googleProfile.id))
+      .limit(1);
 
-    if (user) {
-      user.email = email;
-      user.name = googleProfile.displayName;
-      user.avatar = avatar;
-      return this.usersRepository.save(user);
+    if (existing.length > 0) {
+      const [updated] = await this.db
+        .update(users)
+        .set({ email, name: googleProfile.displayName, avatar })
+        .where(eq(users.googleId, googleProfile.id))
+        .returning();
+      return updated;
     }
 
-    const userData = {
+    const newUser: NewUser = {
       googleId: googleProfile.id,
       email,
       name: googleProfile.displayName,
       avatar,
     };
 
-    user = this.usersRepository.create(userData);
-
-    return this.usersRepository.save(user);
+    const [created] = await this.db.insert(users).values(newUser).returning();
+    return created;
   }
 
   async findByGoogleId(googleId: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { googleId } });
+    const result = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.googleId, googleId))
+      .limit(1);
+    return result[0] ?? null;
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { id } });
+    const result = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+    return result[0] ?? null;
   }
 }

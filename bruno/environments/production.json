@@ -1,0 +1,12 @@
+{
+  "name": "production",
+  "variables": [
+    {
+      "name": "baseUrl",
+      "value": "https://api.yourdomain.com",
+      "enabled": true,
+      "secret": false,
+      "type": "text"
+    }
+  ]
+}

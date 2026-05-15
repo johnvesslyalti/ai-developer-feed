@@ -5,11 +5,9 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/rag/init
-}
-
-headers {
-  Content-Type: application/json
+  url: http://localhost:3001/rag/init
+  body: json
+  auth: none
 }
 
 body:json {

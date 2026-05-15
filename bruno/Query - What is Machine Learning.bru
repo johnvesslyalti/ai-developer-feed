@@ -5,11 +5,9 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/rag/query
-}
-
-headers {
-  Content-Type: application/json
+  url: http://localhost:3001/rag/query
+  body: json
+  auth: none
 }
 
 body:json {

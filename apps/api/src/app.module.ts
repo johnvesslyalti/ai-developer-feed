@@ -6,6 +6,7 @@ import { DrizzleModule } from './db/drizzle.module';
 import { RAGModule } from './rag/rag.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ScraperModule } from './scraper/scraper.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UsersModule } from './users/users.module';
     RAGModule,
     AuthModule,
     UsersModule,
+    ScraperModule,
   ],
   controllers: [AppController],
   providers: [AppService],

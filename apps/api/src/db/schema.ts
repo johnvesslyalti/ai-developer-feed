@@ -29,18 +29,6 @@ export const users = pgTable(
   ],
 );
 
-export const documentEmbeddings = pgTable(
-  'document_embeddings',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    externalId: varchar('external_id', { length: 255 }).notNull().unique(),
-    content: varchar('content', { length: 10000 }).notNull(),
-    title: varchar('title', { length: 500 }),
-    embedding: vector('embedding', 1536).notNull(),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-  },
-  (t) => [index('document_embeddings_external_id_idx').on(t.externalId)],
-);
 
 export const articles = pgTable(
   'articles',
@@ -69,8 +57,6 @@ export const userInterests = pgTable('user_interests', {
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
-export type DocumentEmbedding = typeof documentEmbeddings.$inferSelect;
-export type NewDocumentEmbedding = typeof documentEmbeddings.$inferInsert;
 export type Article = typeof articles.$inferSelect;
 export type NewArticle = typeof articles.$inferInsert;
 export type UserInterest = typeof userInterests.$inferSelect;

@@ -10,6 +10,6 @@ export default defineConfig({
     user: process.env.DB_USER ?? 'postgres',
     password: process.env.DB_PASS ?? 'postgres',
     database: process.env.DB_NAME ?? 'ai_feed',
-    ssl: false,
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
   },
 });

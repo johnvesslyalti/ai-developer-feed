@@ -14,7 +14,7 @@ function AuthCallbackContent() {
       localStorage.setItem('google_id_token', token);
       document.cookie = `google_id_token=${token}; path=/; max-age=2592000;`;
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push('/onboarding');
       }, 100);
     } else {
       setTimeout(() => {

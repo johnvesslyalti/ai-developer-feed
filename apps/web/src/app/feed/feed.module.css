@@ -1,0 +1,234 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── nav ── */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg-primary);
+  z-index: 10;
+}
+
+.logo {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.logoAccent { color: var(--accent); }
+
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navLink {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.navLink:hover { color: var(--accent); }
+
+.signOut {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: color 0.15s ease;
+}
+
+.signOut:hover { color: var(--text-primary); }
+
+/* ── main ── */
+.main {
+  flex: 1;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.header {
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── states ── */
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 4rem 0;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loadingText {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.errorCard {
+  padding: 1.5rem;
+  border: 1px solid #ef444440;
+  border-radius: 8px;
+  background: #ef44441a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.errorText { font-size: 0.9rem; color: #f87171; }
+
+.retryBtn {
+  font-size: 0.875rem;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.35rem 0.875rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.retryBtn:hover { background: rgba(0, 201, 167, 0.1); }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.emptyText { font-size: 0.9rem; color: var(--text-muted); }
+
+.emptyLink { font-size: 0.875rem; color: var(--accent); }
+
+/* ── articles ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card {
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.15s ease;
+}
+
+.card:hover { border-color: #333; }
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.badge_hn {
+  background: rgba(255, 102, 0, 0.15);
+  color: #ff6600;
+}
+
+.badge_devto {
+  background: rgba(100, 100, 255, 0.12);
+  color: #818cf8;
+}
+
+.cardTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.15s ease;
+}
+
+.cardTitle:hover { color: var(--accent); }
+
+.cardSummary {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.readMore {
+  font-size: 0.8rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  align-self: flex-start;
+  transition: color 0.15s ease;
+}
+
+.readMore:hover { color: var(--accent-light); }
+
+/* ── responsive ── */
+@media (max-width: 600px) {
+  .nav { padding: 1rem; }
+  .main { padding: 2rem 1rem; }
+  .title { font-size: 1.5rem; }
+  .card { padding: 1.25rem; }
+}

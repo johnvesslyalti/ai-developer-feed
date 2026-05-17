@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { DRIZZLE } from '../db/drizzle.provider';
 import type { DrizzleDB } from '../db/drizzle.provider';
-import { users, User, NewUser } from '../db/schema';
+import { users, userInterests, User, NewUser } from '../db/schema';
 
 @Injectable()
 export class UsersService {
@@ -59,5 +59,12 @@ export class UsersService {
       .where(eq(users.id, id))
       .limit(1);
     return result[0] ?? null;
+  }
+
+  async saveInterests(userId: string, tags: string[]): Promise<void> {
+    await this.db
+      .insert(userInterests)
+      .values({ userId, tags })
+      .onConflictDoUpdate({ target: userInterests.userId, set: { tags } });
   }
 }

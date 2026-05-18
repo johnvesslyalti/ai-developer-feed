@@ -54,7 +54,7 @@ export default function FeedPage() {
   return (
     <div className={styles.page}>
       <nav className={styles.nav}>
-        <span className={styles.logo}>ai<span className={styles.logoAccent}>feed</span></span>
+        <span className={styles.logo}>inferr</span>
         <div className={styles.navRight}>
           <a href="/chat" className={styles.navLink}>chat</a>
           <a href="/onboarding" className={styles.navLink}>edit interests</a>

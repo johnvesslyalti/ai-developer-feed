@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './onboarding.module.css';
 
@@ -20,6 +20,18 @@ export default function OnboardingPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('google_id_token');
+    if (!token) return;
+    const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    fetch(`${api}/users/interests`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.tags?.length) setSelected(new Set(data.tags));
+      })
+      .catch(() => {});
+  }, []);
 
   const toggle = (tag: string) =>
     setSelected((prev) => {

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { GoogleTokenGuard } from '../auth/google-token.guard';
 import { UsersService } from './users.service';
@@ -7,6 +7,13 @@ import type { User } from '../db/schema';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('interests')
+  @UseGuards(GoogleTokenGuard)
+  async getInterests(@Req() req: Request) {
+    const user = req.user as User;
+    return this.usersService.getInterests(user.id);
+  }
 
   @Post('interests')
   @UseGuards(GoogleTokenGuard)

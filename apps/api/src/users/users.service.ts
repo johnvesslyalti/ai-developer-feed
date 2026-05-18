@@ -68,6 +68,15 @@ export class UsersService {
       .onConflictDoUpdate({ target: userInterests.userId, set: { tags } });
   }
 
+  async getInterests(userId: string): Promise<{ tags: string[] }> {
+    const result = await this.db
+      .select({ tags: userInterests.tags })
+      .from(userInterests)
+      .where(eq(userInterests.userId, userId))
+      .limit(1);
+    return { tags: result[0]?.tags ?? [] };
+  }
+
   async hasInterests(userId: string): Promise<boolean> {
     const result = await this.db
       .select({ tags: userInterests.tags })

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './feed.module.css';
 
 interface Article {
@@ -54,7 +55,10 @@ export default function FeedPage() {
   return (
     <div className={styles.page}>
       <nav className={styles.nav}>
-        <span className={styles.logo}>inferr</span>
+        <div className={styles.logo}>
+          <Image src="/logo.png" alt="Logo" width={22} height={22} style={{ borderRadius: '4px' }} />
+          <span className={styles.logoText}>inferr</span>
+        </div>
         <div className={styles.navRight}>
           <a href="/chat" className={styles.navLink}>chat</a>
           <a href="/onboarding" className={styles.navLink}>edit interests</a>
